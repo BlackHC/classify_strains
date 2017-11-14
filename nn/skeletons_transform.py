@@ -31,7 +31,7 @@ ANGLE_SCALING_FACTOR = np.pi
 
 #since the skeletons are centered with respect the body centroid this value changes more or less linearly
 dd = np.linspace(100, 900, 25)
-SKELETONS_SCALING_FACTOR = np.concatenate((dd[:1:-1], dd))
+SKELETONS_SCALING_FACTOR = np.concatenate((dd[:0:-1], dd))
 
 
 def _h_center_skeleton(skeletons, is_normalized, body_range = (8, 41)):
@@ -144,11 +144,14 @@ def _h_eigenworms_T_inv(DT, is_normalized):
     return skels_n
 
 
+def _angles(*args, **argkws):
+    return _h_angles(*args, **argkws)[0]
+
 
 #PULL ALL THE AVAILABLE DATA TRAMSFORMS TOGETHER
 _skeletons_transforms = dict(
         xy = _h_center_skeleton,
-        angles = _h_angles,
+        angles = _angles,
         eigenworms = _h_eigenworms,
         eigenworms_full = _h_eigenworms_full
         )
@@ -158,8 +161,8 @@ def check_valid_transform(transform_type):
         dd = 'Only valid transforms are : {}'.format(_skeletons_transforms.keys())
         raise ValueError(dd)
 
-def get_skeleton_transform(skeleton, transform_type,  is_normalize):
-    dat = _skeletons_transforms[transform_type](skeleton, is_normalize=is_normalize)
+def get_skeleton_transform(skeleton, transform_type,  is_normalized):
+    dat = _skeletons_transforms[transform_type](skeleton, is_normalized=is_normalized)
     if dat.ndim == 2:
         dat = dat[..., None]
     return dat

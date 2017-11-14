@@ -14,7 +14,6 @@ import pandas as pd
 import tables
 from skeletons_transform import get_skeleton_transform, check_valid_transform
 
-
 # wild isolates used to test SWDB
 SWDB_WILD_ISOLATES = ['JU393', 'ED3054', 'JU394',
                       'N2', 'JU440', 'ED3021', 'ED3017',
@@ -29,9 +28,6 @@ CeNDR_DIVERGENT_SET = ['N2', 'ED3017', 'CX11314', 'LKC34', 'MY16', 'DL238',
                        'JT11398', 'JU775',
                        'JU258', 'MY23', 'EG4725', 'CB4856']
 
-# normalize
-#angles = angles/np.pi/2
-#skeletons = skeletons/500 (250 - 1000)
 
 class SkeletonsFlow():
     def __init__(self,
@@ -43,7 +39,7 @@ class SkeletonsFlow():
                  sample_size_frames_s=90,
                  sample_frequency_s=1 / 10,
                  transform_type = 'angles',
-                 is_normalize = False,
+                 is_normalized = False,
                  shuffle=True
                  ):
 
@@ -55,11 +51,12 @@ class SkeletonsFlow():
         self.n_samples = int(round(sample_size_frames_s / sample_frequency_s))
         self.data_file = data_file
         self.transform_type = transform_type
-        self.is_normalize = is_normalize
+        self.is_normalized = is_normalized
         self.shuffle = shuffle
         # Only used when suffle == False.
         self.skeleton_id = -1
-
+       
+        
         with pd.HDFStore(self.data_file, 'r') as fid:
             skeletons_ranges = fid['/skeletons_groups']
             experiments_data = fid['/experiments_data']
@@ -177,7 +174,7 @@ class SkeletonsFlow():
     def next_single(self):
         if self.shuffle:
             strain_id, skeletons = self._random_choice()
-            if not self.is_angle:
+            if self.transform_type == 'xy':
                 skeletons = self._random_transform(skeletons)
         else:
             self.skeleton_id += 1
