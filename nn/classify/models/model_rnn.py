@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
-from model_resnet import ResNetS, Bottleneck
+from .model_resnet import ResNetS, Bottleneck
 
 class RNNModel(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""

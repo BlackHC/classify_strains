@@ -161,10 +161,11 @@ class ResNetS(nn.Module):
         #global max pooling
         x = F.max_pool2d(x, kernel_size=x.size()[2:])
         
-        x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        embedding = x.view(x.size(0), -1)
 
-        return x
+        classification = self.fc(embedding)
+
+        return classification, embedding
 
 if __name__ == '__main__':
     model = ResNetS(Bottleneck, [3, 4, 6, 3], n_channels=1, num_classes=20)
